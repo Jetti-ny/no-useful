@@ -1,0 +1,656 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#faf9f5;color:#141413}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<title>고민상담소</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Gowun+Batang:wght@400;700&family=IBM+Plex+Sans+KR:wght@400;500;700&family=Nanum+Gothic+Coding&display=swap">
+<style>
+/* Layout: 관공서 민원창구 한 장짜리 서식. 좁은 세로 단, 서식 테두리와 직인 하나에 힘을 몰아줌 */
+:root{
+  --desk:#dfe4dd;        /* 민원실 책상 */
+  --form:#f6f7f2;        /* 서식 용지 */
+  --ink:#1f2a3f;         /* 남색 잉크 */
+  --ink-2:#56607a;       /* 흐린 잉크 */
+  --rule:#b9c1b4;        /* 서식 괘선 */
+  --seal:#c4322a;        /* 인주 */
+  --bar:#2f5d50;         /* 진행 녹색 */
+  --paper:#fbfaf3;       /* 확인서 종이(양 테마 공통) */
+  --paper-ink:#1f2a3f;
+  --paper-rule:#c9c4ae;
+  --display:"Gowun Batang", "Nanum Myeongjo", "AppleMyungjo", serif;
+  --body:"IBM Plex Sans KR", "Apple SD Gothic Neo", "Malgun Gothic", sans-serif;
+  --mono:"Nanum Gothic Coding", "D2Coding", ui-monospace, monospace;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --desk:#151a20; --form:#1e252d; --ink:#e3e7ee; --ink-2:#98a2b3; --rule:#3a4552;
+    --seal:#e0574d; --bar:#5fa18d; color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --desk:#151a20; --form:#1e252d; --ink:#e3e7ee; --ink-2:#98a2b3; --rule:#3a4552;
+  --seal:#e0574d; --bar:#5fa18d; color-scheme:dark;
+}
+*{box-sizing:border-box}
+html,body{min-height:100%}
+body{
+  background:var(--desk); color:var(--ink); font-family:var(--body);
+  font-size:15px; line-height:1.6; padding-inline:16px; padding-block:20px 48px;
+}
+.wrap{max-width:540px; margin:0 auto; display:flex; flex-direction:column; gap:14px}
+.agency{display:flex; justify-content:space-between; align-items:baseline; gap:8px; flex-wrap:wrap;
+  font-size:12px; color:var(--ink-2); letter-spacing:.04em}
+.agency b{font-family:var(--display); font-size:17px; color:var(--ink); letter-spacing:.02em}
+.sheet{background:var(--form); border:1.5px solid var(--ink); padding:22px 20px; display:flex; flex-direction:column; gap:16px}
+.sheet h1,.sheet h2{font-family:var(--display); font-weight:700; margin:0; text-wrap:balance; line-height:1.3}
+.sheet h1{font-size:26px}
+.sheet h2{font-size:20px}
+.formno{font-family:var(--mono); font-size:11.5px; color:var(--ink-2); display:flex; justify-content:space-between; gap:8px; flex-wrap:wrap; border-bottom:1px solid var(--rule); padding-bottom:8px}
+.lead{margin:0; color:var(--ink-2)}
+label.field{display:flex; flex-direction:column; gap:6px; font-size:12.5px; font-weight:500; letter-spacing:.06em; color:var(--ink-2)}
+textarea{
+  font:inherit; font-size:16px; color:var(--ink); background:transparent; resize:vertical; min-height:110px;
+  border:1px solid var(--rule); padding:12px; line-height:1.7;
+  background-image:repeating-linear-gradient(transparent 0 26.2px, var(--rule) 26.2px 27.2px);
+  background-position:0 11px;
+}
+textarea:focus{outline:2px solid var(--bar); outline-offset:1px}
+.q{border:0; margin:0; padding:0 0 16px; min-width:0; display:flex; flex-direction:column; gap:8px; border-bottom:1px dashed var(--rule)}
+.qh{display:flex; align-items:baseline; gap:8px; padding:0; font-size:14.5px; font-weight:700; color:var(--ink)}
+.qh small{font-weight:400; font-size:12px; color:var(--ink-2)}
+.qn{font-family:var(--mono); font-size:11.5px; font-weight:400; border:1px solid var(--ink); width:20px; height:20px; display:inline-grid; place-items:center; flex:none; align-self:center}
+input[type="text"]{
+  font:inherit; font-size:16px; color:var(--ink); background:transparent; width:100%;
+  border:0; border-bottom:1.5px solid var(--ink); padding:8px 2px;
+}
+input[type="text"]:focus{outline:2px solid var(--bar); outline-offset:2px}
+.chips{display:flex; flex-wrap:wrap; gap:6px}
+.chip{position:relative; cursor:pointer}
+.chip input{position:absolute; opacity:0; inset:0; margin:0; cursor:pointer}
+.chip span{display:inline-flex; align-items:center; gap:6px; border:1px solid var(--rule); padding:6px 11px; font-size:14px; color:var(--ink); background:transparent}
+.chip span::before{content:""; width:10px; height:10px; border:1px solid var(--ink-2); flex:none}
+.chip input[type="radio"] + span::before{border-radius:50%}
+.chip input:checked + span{border-color:var(--ink); background:var(--desk); font-weight:500}
+.chip input:checked + span::before{background:var(--seal); border-color:var(--seal)}
+.chip input:focus-visible + span{outline:2px solid var(--bar); outline-offset:1px}
+.range{display:flex; align-items:center; gap:12px}
+.range input{flex:1; min-width:0; accent-color:var(--bar)}
+.range output{font-family:var(--display); font-size:24px; font-weight:700; width:2ch; text-align:right; font-variant-numeric:tabular-nums}
+.scale{display:flex; justify-content:space-between; font-size:11.5px; color:var(--ink-2)}
+.countrow{display:flex; justify-content:space-between; align-items:baseline; gap:10px; flex-wrap:wrap}
+.count{font-family:var(--mono); font-size:11.5px; color:var(--ink-2); margin-left:auto; font-variant-numeric:tabular-nums}
+.count.short{color:var(--seal)}
+.err{font-size:12.5px; color:var(--seal); font-weight:500}
+.err:empty{display:none}
+.must{margin:0; font-size:12.5px; font-weight:500; color:var(--seal)}
+.q.bad .chips .chip span{border-color:var(--seal)}
+input[type="text"].bad{border-bottom-color:var(--seal)}
+textarea.bad{border-color:var(--seal)}
+.notes{margin:0; padding-left:18px; font-size:12.5px; color:var(--ink-2); display:flex; flex-direction:column; gap:2px}
+.btn{
+  font:inherit; font-weight:700; font-size:16px; cursor:pointer; border:1.5px solid var(--ink);
+  background:var(--ink); color:var(--form); padding:13px 18px; width:100%;
+}
+.btn.ghost{background:transparent; color:var(--ink)}
+.btn:focus-visible{outline:3px solid var(--bar); outline-offset:2px}
+.btn:active{transform:translateY(1px)}
+.btns{display:grid; grid-template-columns:1fr 1fr; gap:8px}
+@media (max-width:420px){.btns{grid-template-columns:1fr}}
+
+/* 인트로 */
+.home{font:inherit; font-family:var(--display); font-size:17px; font-weight:700; color:var(--ink); background:none; border:0; padding:0; cursor:pointer; letter-spacing:.02em}
+.home:focus-visible{outline:2px solid var(--bar); outline-offset:3px}
+.intro{gap:20px; padding-block:26px 24px}
+.intro .formno b{color:var(--ink); font-weight:400}
+.live{display:inline-block; width:7px; height:7px; border-radius:50%; background:var(--bar); margin-right:6px; vertical-align:1px; animation:blink 2s ease-in-out infinite}
+@keyframes blink{50%{opacity:.3}}
+.sheet .hero{font-family:var(--display); font-size:clamp(28px, 8vw, 44px); line-height:1.2; letter-spacing:-.01em; margin:0}
+.intro .lead{font-size:15.5px; line-height:1.75; max-width:34em}
+.stats{display:grid; grid-template-columns:repeat(3,1fr); margin:0; border-top:1.5px solid var(--ink); border-bottom:1px solid var(--rule)}
+.stats div{padding:12px 4px 12px 0; display:flex; flex-direction:column; gap:2px; min-width:0}
+.stats div + div{border-left:1px solid var(--rule); padding-left:10px}
+.stats dt{font-size:11.5px; color:var(--ink-2)}
+.stats dd{margin:0; font-family:var(--display); font-weight:700; font-size:18px; font-variant-numeric:tabular-nums; overflow-wrap:anywhere}
+.steps-wrap{display:flex; flex-direction:column; gap:10px}
+.steps-h{font-size:14.5px !important; font-family:var(--body) !important; letter-spacing:.06em}
+.steps{list-style:none; margin:0; padding:0; display:flex; flex-direction:column; gap:10px; counter-reset:st}
+.steps li{display:grid; grid-template-columns:28px 1fr; column-gap:10px; counter-increment:st}
+.steps li::before{content:counter(st); grid-row:span 2; width:24px; height:24px; border:1px solid var(--ink); display:grid; place-items:center; font-family:var(--mono); font-size:12px}
+.steps b{font-weight:700; font-size:14.5px}
+.steps span{font-size:13px; color:var(--ink-2)}
+@media (max-width:380px){.stats dd{font-size:15.5px}}
+@media (prefers-reduced-motion: reduce){.live{animation:none}}
+
+/* 상담 중 */
+.meta{display:grid; grid-template-columns:auto 1fr; gap:4px 14px; margin:0; font-size:13.5px}
+.meta dt{color:var(--ink-2)}
+.meta dd{margin:0; font-weight:500; min-width:0; overflow-wrap:anywhere}
+.stage{font-family:var(--display); font-size:19px; font-weight:700; min-height:2.6em; display:flex; align-items:center}
+.track{height:14px; border:1.5px solid var(--ink); background:transparent; position:relative; overflow:hidden}
+.fill{position:absolute; inset:0 auto 0 0; width:0; background:var(--bar); transition:width .5s linear}
+.pct{display:flex; justify-content:space-between; font-family:var(--mono); font-size:12px; color:var(--ink-2); font-variant-numeric:tabular-nums}
+.panes{display:grid; grid-template-columns:1fr; gap:12px}
+@media (min-width:520px){.panes{grid-template-columns:3fr 2fr}}
+.pane{display:flex; flex-direction:column; gap:6px; min-width:0}
+.ph{font-size:12.5px; font-weight:700; letter-spacing:.06em; display:flex; align-items:baseline; gap:6px; flex-wrap:wrap}
+.ph small{font-weight:400; font-size:11px; color:var(--seal); letter-spacing:0}
+.talk{
+  height:240px; overflow-y:auto; border:1px solid var(--rule); background:var(--form);
+  padding:10px; display:flex; flex-direction:column; gap:8px;
+}
+.bubble{
+  align-self:flex-start; max-width:94%; background:var(--desk); color:var(--ink);
+  border-radius:14px 14px 14px 3px; padding:8px 12px; font-size:14px; line-height:1.55;
+  overflow-wrap:anywhere; animation:pop .25s ease-out both;
+}
+@keyframes pop{from{opacity:0; transform:translateY(4px)}}
+.log{
+  font-family:var(--mono); font-size:11px; line-height:1.55; color:var(--seal);
+  background:var(--desk); border:1px dashed var(--seal);
+  padding:8px 10px; height:160px; overflow-y:auto; margin:0;
+  white-space:pre-wrap; overflow-wrap:anywhere;
+}
+.log .ts{color:var(--ink-2)}
+@media (min-width:520px){.log{height:240px}}
+@media (prefers-reduced-motion: reduce){.bubble{animation:none}}
+.intensity{display:flex; align-items:center; gap:10px; font-size:12.5px; color:var(--ink-2)}
+.intensity .dots{display:flex; gap:3px}
+.intensity .dots i{width:9px; height:9px; border:1px solid var(--ink-2); display:block}
+.intensity .dots i.on{background:var(--seal); border-color:var(--seal)}
+
+/* 확인서 */
+.cert{
+  background:var(--paper); color:var(--paper-ink); position:relative;
+  border:1px solid var(--paper-rule); padding:26px 22px 30px;
+  box-shadow:0 1px 0 rgba(0,0,0,.08), 0 10px 30px -18px rgba(0,0,0,.45);
+  display:flex; flex-direction:column; gap:18px;
+}
+.cert::before{content:""; position:absolute; inset:7px; border:3px double var(--paper-rule); pointer-events:none}
+.cert .no{font-family:var(--mono); font-size:11.5px; color:#6b6550; position:relative}
+.cert h2{font-family:var(--display); font-size:30px; text-align:center; letter-spacing:.5em; margin:0; padding-left:.5em; position:relative}
+.cert table{width:100%; border-collapse:collapse; font-size:14px; position:relative}
+.cert th,.cert td{border:1px solid var(--paper-rule); padding:8px 10px; text-align:left; vertical-align:top}
+.cert th{width:30%; font-weight:500; background:rgba(201,196,174,.25); white-space:nowrap}
+.cert td{overflow-wrap:anywhere}
+.cert .body{font-family:var(--display); font-size:16.5px; line-height:1.9; margin:0; text-align:center; position:relative}
+.cert .date{font-family:var(--display); text-align:center; margin:0; position:relative; font-variant-numeric:tabular-nums}
+.sign{display:flex; justify-content:center; align-items:center; gap:14px; position:relative; min-height:96px}
+.sign .who{font-family:var(--display); font-size:22px; font-weight:700; letter-spacing:.25em}
+.seal{
+  width:84px; height:84px; border:3.5px solid #c4322a; color:#c4322a; border-radius:6px;
+  display:grid; grid-template-columns:1fr 1fr; place-items:center; padding:6px;
+  font-family:var(--display); font-weight:700; font-size:19px; line-height:1;
+  transform:rotate(-7deg); mix-blend-mode:multiply; opacity:.88;
+  box-shadow:inset 0 0 0 1.5px #c4322a;
+  margin-left:-30px;
+}
+.seal.stamp{animation:stamp .45s cubic-bezier(.2,.8,.3,1.2) both .35s}
+@keyframes stamp{from{transform:rotate(-7deg) scale(2.4); opacity:0} to{transform:rotate(-7deg) scale(1); opacity:.88}}
+.foot{font-size:12px; color:var(--ink-2); text-align:center; margin:0}
+
+/* 위기 안내 */
+.care{border-color:var(--bar)}
+.care p{margin:0}
+.lines{display:flex; flex-direction:column; gap:8px}
+.line{display:flex; justify-content:space-between; align-items:center; gap:10px; border:1px solid var(--rule); padding:10px 12px; flex-wrap:wrap}
+.line strong{font-size:20px; font-variant-numeric:tabular-nums; user-select:all}
+.line span{font-size:13px; color:var(--ink-2)}
+
+@media (prefers-reduced-motion: reduce){
+  .seal.stamp{animation:none}
+  .fill{transition:none}
+}
+</style>
+
+<div class="wrap">
+  <div class="agency"><button type="button" class="home" id="home">고민상담소</button><span>마음민원과 · 24시 무인 상담창구</span></div>
+
+  <!-- 0. 인트로 -->
+  <section class="sheet intro" id="s-intro">
+    <div class="formno"><span><i class="live"></i>지금 상담 가능한 상담사 <b id="agentsOn">5</b>명</span><span>예약 없이 바로 상담</span></div>
+    <h1 class="hero">해결 못한 고민,<br>여기 두고 가세요.</h1>
+    <p class="lead">혼자 끙끙 앓던 고민, 이제 고민상담소에 맡기세요. 전문 상담사가 귀하의 이야기를 처음부터 끝까지 들어드리고, 꼭 맞는 해결책을 찾아드립니다.</p>
+    <button class="btn" id="go" type="button">상담 신청하기</button>
+    <dl class="stats">
+      <div><dt>누적 상담 완료</dt><dd id="total">1,284,302건</dd></div>
+      <div><dt>상담 완료율</dt><dd>99.2%</dd></div>
+      <div><dt>평균 상담 시간</dt><dd>24초</dd></div>
+    </dl>
+    <div class="steps-wrap">
+      <h2 class="steps-h">이용 절차</h2>
+      <ol class="steps">
+        <li><b>신청서 작성</b><span>고민을 7개 항목에 맞춰 자세히 적어 주세요.</span></li>
+        <li><b>전문 상담</b><span>담당 상담사가 배정되어 귀하의 고민을 경청합니다.</span></li>
+        <li><b>확인서 발급</b><span>상담이 끝나면 소장 직인이 찍힌 확인서를 드립니다.</span></li>
+      </ol>
+    </div>
+  </section>
+
+  <!-- 1. 접수 -->
+  <form class="sheet" id="s-form" novalidate hidden>
+    <div class="formno"><span>별지 제4호 서식</span><span>처리기한: 접수 즉시</span></div>
+    <h1>고민 상담 신청서</h1>
+    <p class="lead">아래 항목을 자세히 적어 주시면 전문 상담사가 귀하의 고민을 꼼꼼히 분석하여 꼭 맞는 해결책을 찾아드립니다. 이제 혼자 고민하지 않으셔도 됩니다.</p>
+    <p class="must">모든 항목을 빠짐없이 작성해야 상담이 진행됩니다.</p>
+
+    <div class="q">
+      <label class="qh" for="worry"><span class="qn">1</span>고민 한 줄 요약</label>
+      <input type="text" id="worry" maxlength="80" placeholder="예) 내일 발표 망하면 어떡하지" autocomplete="off">
+      <div class="err" id="err-worry" role="alert"></div>
+    </div>
+
+    <fieldset class="q">
+      <legend class="qh"><span class="qn">2</span>고민이 시작된 시기</legend>
+      <div class="chips">
+        <label class="chip"><input type="radio" name="when" value="방금"><span>방금</span></label>
+        <label class="chip"><input type="radio" name="when" value="오늘"><span>오늘</span></label>
+        <label class="chip"><input type="radio" name="when" value="이번 주"><span>이번 주</span></label>
+        <label class="chip"><input type="radio" name="when" value="몇 년 전"><span>몇 년 전</span></label>
+        <label class="chip"><input type="radio" name="when" value="기억 안 남"><span>기억 안 남</span></label>
+      </div>
+      <div class="err" id="err-when" role="alert"></div>
+    </fieldset>
+
+    <fieldset class="q">
+      <legend class="qh"><span class="qn">3</span>관련된 사람 <small>(복수 선택)</small></legend>
+      <div class="chips">
+        <label class="chip"><input type="checkbox" name="who" value="나 자신"><span>나 자신</span></label>
+        <label class="chip"><input type="checkbox" name="who" value="가족"><span>가족</span></label>
+        <label class="chip"><input type="checkbox" name="who" value="친구"><span>친구</span></label>
+        <label class="chip"><input type="checkbox" name="who" value="직장·학교"><span>직장·학교</span></label>
+        <label class="chip"><input type="checkbox" name="who" value="연인"><span>연인</span></label>
+        <label class="chip"><input type="checkbox" name="who" value="모르는 사람"><span>모르는 사람</span></label>
+      </div>
+      <div class="err" id="err-who" role="alert"></div>
+    </fieldset>
+
+    <div class="q">
+      <label class="qh" for="level"><span class="qn">4</span>고민 강도</label>
+      <div class="range">
+        <input type="range" id="level" min="1" max="10" value="6">
+        <output id="levelOut" for="level">6</output>
+      </div>
+      <div class="scale"><span>1 금방 잊음</span><span>10 잠 못 잠</span></div>
+    </div>
+
+    <fieldset class="q">
+      <legend class="qh"><span class="qn">5</span>지금까지 해본 일 <small>(복수 선택)</small></legend>
+      <div class="chips">
+        <label class="chip"><input type="checkbox" name="tried" value="혼자 계속 생각함"><span>혼자 계속 생각함</span></label>
+        <label class="chip"><input type="checkbox" name="tried" value="친구에게 말함"><span>친구에게 말함</span></label>
+        <label class="chip"><input type="checkbox" name="tried" value="인터넷 검색"><span>인터넷 검색</span></label>
+        <label class="chip"><input type="checkbox" name="tried" value="일단 잠"><span>일단 잠</span></label>
+        <label class="chip"><input type="checkbox" name="tried" value="아무것도 안 함"><span>아무것도 안 함</span></label>
+      </div>
+      <div class="err" id="err-tried" role="alert"></div>
+    </fieldset>
+
+    <div class="q">
+      <label class="qh" for="detail"><span class="qn">6</span>자세한 사정 <small>(20자 이상)</small></label>
+      <textarea id="detail" maxlength="1000" placeholder="언제, 어디서, 누가, 무엇을, 어떻게, 왜 고민되는지 자세히 적어 주세요. 자세할수록 해결이 빨라집니다." aria-describedby="detailCount detailErr"></textarea>
+      <div class="countrow"><span class="err" id="detailErr" role="alert"></span><span class="count short" id="detailCount">0자 / 최소 20자</span></div>
+    </div>
+
+    <fieldset class="q">
+      <legend class="qh"><span class="qn">7</span>원하는 상담 방식</legend>
+      <div class="chips">
+        <label class="chip"><input type="radio" name="want" value="현실적인 조언"><span>현실적인 조언</span></label>
+        <label class="chip"><input type="radio" name="want" value="해결 방법"><span>해결 방법</span></label>
+        <label class="chip"><input type="radio" name="want" value="따끔한 충고"><span>따끔한 충고</span></label>
+        <label class="chip"><input type="radio" name="want" value="그냥 들어주기"><span>그냥 들어주기</span></label>
+      </div>
+      <div class="err" id="err-want" role="alert"></div>
+    </fieldset>
+
+    <ol class="notes">
+      <li>접수된 고민의 99.2%가 상담 완료 처리되었습니다.</li>
+      <li>자세히 적어 주실수록 더 꼭 맞는 해결책을 드립니다.</li>
+    </ol>
+    <button class="btn" id="submit" type="submit">고민 해결 신청하기</button>
+  </form>
+
+  <!-- 1-1. 무거운 고민 -->
+  <section class="sheet care" id="s-care" hidden>
+    <h2>이 고민은 여기서 다룰 수 없어요</h2>
+    <p>적어주신 내용은 장난으로 처리하기엔 무거워 보여요. 지금 마음이 많이 힘들다면, 이야기를 들어줄 수 있는 사람이 있어요.</p>
+    <div class="lines">
+      <div class="line"><span>자살예방상담전화 (24시간)</span><strong>109</strong></div>
+      <div class="line"><span>정신건강위기상담 (24시간)</span><strong>1577-0199</strong></div>
+    </div>
+    <p class="lead">가까운 사람에게 한 줄이라도 털어놓는 것도 좋아요.</p>
+    <button class="btn ghost" id="careBack" type="button">돌아가기</button>
+  </section>
+
+  <!-- 2. 상담 중 -->
+  <section class="sheet" id="s-work" hidden>
+    <div class="formno"><span id="w-no">접수번호 -</span><span>처리 상태: 상담 중</span></div>
+    <dl class="meta">
+      <dt>고민 내용</dt><dd id="w-worry"></dd>
+      <dt>고민 강도</dt><dd id="w-level"></dd>
+      <dt>담당 상담사</dt><dd id="w-agent"></dd>
+    </dl>
+    <div class="stage" id="w-stage" aria-live="polite">상담 준비 중</div>
+    <div class="track" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" id="w-track"><div class="fill" id="w-fill"></div></div>
+    <div class="pct"><span id="w-pct">0%</span><span id="w-time">경과 0초</span></div>
+    <div class="intensity">상담사 집중도 <span class="dots" id="w-dots"></span></div>
+    <div class="panes">
+      <div class="pane">
+        <div class="ph">상담 내용</div>
+        <div class="talk" id="w-talk" aria-live="polite"></div>
+      </div>
+      <div class="pane">
+        <div class="ph">상담사 속마음 <small>신청인에게 공개되지 않음</small></div>
+        <pre class="log" id="w-log"></pre>
+      </div>
+    </div>
+  </section>
+
+  <!-- 3. 확인서 -->
+  <section id="s-cert" hidden>
+    <div class="cert" id="cert">
+      <div class="no" id="c-no">제 - 호</div>
+      <h2>상담완료확인서</h2>
+      <table>
+        <tr><th>신청 고민</th><td id="c-worry"></td></tr>
+        <tr><th>담당 상담사</th><td id="c-agent"></td></tr>
+        <tr><th>상담 소요시간</th><td id="c-time"></td></tr>
+        <tr><th>제출 분량</th><td id="c-sent"></td></tr>
+        <tr><th>상담사 열람 분량</th><td id="c-read"></td></tr>
+        <tr><th>희망 상담 방식</th><td id="c-want"></td></tr>
+        <tr><th>처리 결과</th><td>상담 완료</td></tr>
+        <tr><th>부수 발생</th><td id="c-self"></td></tr>
+        <tr><th>비고</th><td id="c-note"></td></tr>
+      </table>
+      <p class="body">위 신청인의 고민을 본 상담소에서<br>빠짐없이 성실하게 들었음을 확인합니다.</p>
+      <p class="date" id="c-date"></p>
+      <div class="sign">
+        <span class="who">고민상담소장</span>
+        <span class="seal" id="seal" aria-label="직인"><span>고민</span><span>상담</span><span>소장</span><span>지인</span></span>
+      </div>
+    </div>
+    <div class="btns" style="margin-top:14px">
+      <button class="btn ghost" id="again" type="button">같은 고민 또 털어놓기</button>
+      <button class="btn" id="new" type="button">다른 고민 접수</button>
+    </div>
+    <p class="foot" style="margin-top:10px">본 확인서는 어떠한 효력도 없습니다.</p>
+  </section>
+</div>
+
+<script>
+(function(){
+  const $ = id => document.getElementById(id);
+  const screens = ["s-intro","s-form","s-care","s-work","s-cert"];
+  const show = id => screens.forEach(s => $(s).hidden = s !== id);
+  const pick = a => a[Math.floor(Math.random()*a.length)];
+  const esc = s => s.replace(/[&<>"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+
+  const HEAVY = /(죽고\s*싶|죽을래|자살|자해|살기\s*싫|사라지고\s*싶|목숨|극단적\s*선택|뛰어내리)/;
+
+  const SELF = [
+    "근데 나 아까 가스불 껐나",
+    "점심 뭐 먹지",
+    "이 일을 계속해도 되는 걸까",
+    "아까 엘리베이터에서 인사 너무 크게 한 것 같음",
+    "택배 문 앞에 두고 간 거 맞나",
+    "냉장고 두부 유통기한 언제였지",
+    "카톡 읽고 답장 안 한 거 3일째",
+    "치과 예약 미뤄야 하나",
+    "다음 달 카드값",
+    "양말 짝이 안 맞는 것 같음 (확인 안 함)",
+    "퇴근길에 비 오면 어떡하지",
+    "우산 회사에 두고 옴. 여기가 회사인데 안 보임",
+    "\"감사합니다\"를 \"감사함다\"로 보냄",
+    "화분에 물 언제 줬지",
+    "보일러 예약 켜놨나",
+    "머리 자를 때 됐나",
+    "어제 꿈에 나온 사람 누구였지",
+    "이번 주말 계획 없음. 괜찮은 건가",
+    "노트북 충전기 어디 뒀지",
+    "팀장님이 어제 '잠깐 얘기 좀' 하고 아직 안 부름",
+    "은행 앱 비밀번호 기억 안 남",
+    "동창 결혼식 축의금 얼마 해야 하지",
+    "오늘 운동 가야 하는데 안 갈 것 같음",
+    "내일 알람 맞췄나",
+    "지금 상담 제대로 하고 있는 거 맞나",
+    "이것도 기록 남는 건가",
+    "아까 웃을 타이밍 아니었는데 웃음",
+    "현관 비밀번호 바꿔야 하나",
+    "고양이 사료 주문 안 함",
+    "중학교 때 별명 아직 기억하는 사람 있을까",
+    "어깨가 왜 이렇게 뭉쳤지",
+    "남의 고민 듣다가 내 고민이 늘어남",
+  ];
+  const NOTES = [
+    "힘들겠다ㅠㅠ",
+    "헐 진짜 힘들겠다ㅠㅠ",
+    "에고ㅠㅠ 많이 속상하셨겠어요",
+    "그럴 수 있어요ㅠ",
+    "토닥토닥ㅠㅠ",
+    "마음이 많이 쓰이셨겠네요ㅠ",
+    "충분히 그럴 만해요ㅠㅠ",
+    "와… 진짜 고생 많으셨어요ㅠ",
+  ];
+  const shuffle = a => { a = a.slice(); for (let i=a.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); [a[i],a[j]]=[a[j],a[i]]; } return a; };
+
+  const AGENTS = ["제3상담실 박정숙 상담사","제1상담실 김공감 상담사","야간상담팀 이불안 상담사","제2상담실 최끄덕 수석상담사","새벽상담반 오만가지 실장"];
+
+  const STAGES = [
+    "고민 경청 중",
+    "고개 끄덕이는 중",
+    "공감하는 표정 짓는 중",
+    "적절한 조언 떠올리는 중",
+    "조언이 떠오르지 않는 중",
+    "\"그럴 수 있어요\" 준비 중",
+    "상담 마무리 중",
+    "마무리가 안 돼서 다시 마무리 중",
+  ];
+
+  const josa = (w, a, b) => { const c = w.charCodeAt(w.length-1) - 0xAC00; return (c >= 0 && c <= 11171 && c % 28) ? a : b; };
+
+  const WHEN_TALK = {
+    "방금": "방금 생긴 고민이라 더 당황스러우셨겠어요.",
+    "오늘": "오늘 하루 종일 마음이 무거우셨겠어요.",
+    "이번 주": "이번 주 내내 신경 쓰이셨겠네요.",
+    "몇 년 전": "몇 년을 마음에 담아두셨다니, 정말 오래 버티셨어요.",
+    "기억 안 남": "언제부터인지도 모를 만큼 오래된 고민이네요.",
+  };
+
+  // 겉: 다정한 상담 / 속: 딴생각. 두 줄기가 동시에 흘러감
+  function makeScript(f){
+    const w = f.worry;
+    const short = w.length > 16 ? w.slice(0,16)+"…" : w;
+    const firstDetail = f.detail.length > 16 ? f.detail.slice(0,16)+"…" : f.detail;
+    const lvlTalk = f.level >= 8 ? "정말 많이 힘드셨겠어요." : f.level <= 3 ? "그래도 이렇게 털어놓으신 게 대단해요." : "가볍지 않은 마음이셨겠어요.";
+    const talk = [
+      "안녕하세요, 담당 상담사입니다. 천천히, 편하게 말씀해 주세요.",
+      `"${short}"… 이런 고민을 하고 계셨군요.`,
+      WHEN_TALK[f.when] || "마음 많이 쓰이셨겠어요.",
+      `${f.who.join(", ")}… 다 마음이 쓰이는 관계죠.`,
+      `고민 강도가 ${f.level}이라니… ${lvlTalk}`,
+      `"${firstDetail}" 이 부분이 특히 마음에 와닿네요.`,
+      `${f.tried.join(", ")}… 할 수 있는 건 다 해보셨네요.`,
+      `${f.want}${josa(f.want,"을","를")} 원하신다고 하셨죠.`,
+      "음… 제 생각에는요,",
+      "그럴 수 있어요.",
+      "정말 잘하고 계신 거예요. 다 잘될 거예요.",
+    ];
+    const reactions = [
+      "인사 너무 기계적이었나",
+      "고민 강도 숫자만 봄",
+      "자세한 사정 첫 줄만 읽음",
+      "'지금까지 해본 일' 그냥 이어 읽음",
+      "제 생각에는요… 다음에 할 말 없음",
+      "그럴 수 있어요는 만능이다",
+    ];
+    const pattern = ["R","S","R","S","S","R","S","S","R","S","S","S","R","S","S","S","R","S"];
+    const pool = shuffle(SELF);
+    let k = 0, r = 0;
+    const mind = pattern.map(p => p === "S" ? pool[k++] : reactions[r++]);
+    return { talk, mind, selfCount: k };
+  }
+
+  const DURATION = 24000;
+  let current = null, timers = [];
+  const clearTimers = () => { timers.forEach(clearTimeout); timers = []; };
+
+  function receiptNo(){
+    const d = new Date();
+    return `${d.getFullYear()}-상담-${String(Math.floor(Math.random()*900000)+100000)}`;
+  }
+
+  const checked = name => [...document.querySelectorAll(`input[name="${name}"]:checked`)].map(i => i.value);
+
+  function collect(){
+    const worry = $("worry").value.trim();
+    const f = {
+      worry,
+      when: checked("when")[0] || "",
+      who: checked("who"),
+      level: Number($("level").value),
+      tried: checked("tried"),
+      detail: $("detail").value.trim(),
+      want: checked("want")[0] || "",
+    };
+    f.chars = f.worry.length + f.detail.length + [f.when, f.want, ...f.who, ...f.tried].join("").length;
+    f.filled = [true, f.when, f.who.length, true, f.tried.length, f.detail, f.want].filter(Boolean).length;
+    return f;
+  }
+
+  function start(f){
+    clearTimers();
+    const script = makeScript(f);
+    current = { form:f, agent:pick(AGENTS), no:receiptNo(), t0:Date.now(), selfCount:script.selfCount };
+    $("w-no").textContent = "접수번호 " + current.no;
+    $("w-worry").textContent = f.worry;
+    $("w-level").textContent = `${f.level} / 10`;
+    $("w-agent").textContent = current.agent;
+    $("w-log").innerHTML = "";
+    $("w-talk").innerHTML = "";
+    $("w-fill").style.width = "0%";
+    $("w-pct").textContent = "0%";
+    show("s-work");
+    window.scrollTo(0,0);
+
+    const dots = $("w-dots"); dots.innerHTML = "";
+    for (let i=0;i<10;i++) dots.appendChild(document.createElement("i"));
+
+    const T = DURATION - 800;
+    script.talk.forEach((line, i) => {
+      timers.push(setTimeout(() => {
+        const el = document.createElement("div");
+        el.className = "bubble"; el.textContent = line;
+        $("w-talk").appendChild(el);
+        $("w-talk").scrollTop = $("w-talk").scrollHeight;
+      }, 300 + T * i/(script.talk.length-1)));
+    });
+    // 속마음은 뒤로 갈수록 촘촘해짐
+    script.mind.forEach((line, i) => {
+      const x = i/(script.mind.length-1);
+      timers.push(setTimeout(() => {
+        $("w-log").insertAdjacentHTML("beforeend", `<span class="ts">·</span> ${esc(line)}\n`);
+        $("w-log").scrollTop = $("w-log").scrollHeight;
+      }, 900 + (T-900) * Math.pow(x, 0.8)));
+    });
+
+    STAGES.forEach((s,i) => timers.push(setTimeout(() => { $("w-stage").textContent = s; }, DURATION * i/STAGES.length)));
+
+    // 진행바는 정직하지 않음: 92%에서 한참 머묾
+    const tick = () => {
+      const el = Date.now() - current.t0;
+      const r = Math.min(el/DURATION, 1);
+      let p = r < .55 ? r/.55*92 : r < .93 ? 92 + (r-.55)*5 : 94 + (r-.93)/.07*6;
+      p = Math.min(100, Math.floor(p));
+      $("w-fill").style.width = p + "%";
+      $("w-track").setAttribute("aria-valuenow", p);
+      $("w-pct").textContent = p + "%";
+      $("w-time").textContent = "경과 " + Math.floor(el/1000) + "초";
+      const lvl = Math.max(1, Math.min(10, Math.round(9 - r*7 + Math.sin(el/600)*1.2)));
+      [...dots.children].forEach((d,i) => d.classList.toggle("on", i < lvl));
+      if (r < 1) timers.push(setTimeout(tick, 250));
+      else timers.push(setTimeout(finish, 700));
+    };
+    tick();
+  }
+
+  function finish(){
+    const f = current.form;
+    const secs = Math.round((Date.now() - current.t0)/1000);
+    const d = new Date();
+    $("c-no").textContent = `제 ${current.no} 호`;
+    $("c-worry").textContent = f.worry;
+    $("c-agent").textContent = current.agent;
+    $("c-time").textContent = `${secs}초 (새벽 고민 환산 약 ${(secs/7).toFixed(1)}회분)`;
+    $("c-sent").textContent = `${f.chars.toLocaleString()}자 · 7개 항목 모두 작성`;
+    $("c-read").textContent = f.detail ? pick(["첫 줄 일부","약 2줄","약 3줄 (중간에 딴생각)","제목과 첫 줄"]) : "제목만";
+    $("c-want").textContent = `${f.want || "미기재"} → 공감 멘트로 대체`;
+    $("c-self").textContent = `담당 상담사 개인 고민 ${current.selfCount}건 동반 발생`;
+    $("c-note").textContent = pick(NOTES);
+    $("c-date").textContent = `${d.getFullYear()}년 ${d.getMonth()+1}월 ${d.getDate()}일`;
+    const seal = $("seal"); seal.classList.remove("stamp"); void seal.offsetWidth; seal.classList.add("stamp");
+    show("s-cert");
+    window.scrollTo(0,0);
+  }
+
+  // 인트로: 누적 상담 건수는 시간이 갈수록 계속 늘어남
+  const BASE = 1284302, EPOCH = Date.UTC(2026, 9, 7);
+  const renderTotal = () => { $("total").textContent = (BASE + Math.max(0, Math.floor((Date.now() - EPOCH)/2500))).toLocaleString("ko-KR") + "건"; };
+  renderTotal(); setInterval(renderTotal, 2500);
+  setInterval(() => { $("agentsOn").textContent = 3 + Math.floor(Math.random()*3); }, 7000);
+  $("go").addEventListener("click", () => { show("s-form"); window.scrollTo(0,0); $("worry").focus({preventScroll:true}); });
+  $("home").addEventListener("click", () => { clearTimers(); show("s-intro"); window.scrollTo(0,0); });
+
+  $("level").addEventListener("input", e => { $("levelOut").textContent = e.target.value; });
+  const MIN_DETAIL = 20;
+  const updateCount = () => {
+    const n = $("detail").value.trim().length;
+    const c = $("detailCount");
+    c.textContent = n < MIN_DETAIL ? `${n}자 / 최소 ${MIN_DETAIL}자` : `${n.toLocaleString()}자 / 1000자`;
+    c.classList.toggle("short", n < MIN_DETAIL);
+    if (n >= MIN_DETAIL) { $("detailErr").textContent = ""; $("detail").classList.remove("bad"); }
+  };
+  $("detail").addEventListener("input", updateCount);
+  $("worry").addEventListener("input", () => { if ($("worry").value.trim()) { $("err-worry").textContent = ""; $("worry").classList.remove("bad"); } });
+  ["when","who","tried","want"].forEach(name => {
+    document.querySelectorAll(`input[name="${name}"]`).forEach(inp => inp.addEventListener("change", () => {
+      if (checked(name).length) { $("err-" + name).textContent = ""; $("err-" + name).closest(".q").classList.remove("bad"); }
+    }));
+  });
+
+  const resetForm = () => {
+    $("s-form").reset();
+    $("levelOut").textContent = $("level").value;
+    document.querySelectorAll("#s-form .err").forEach(e => e.textContent = "");
+    document.querySelectorAll("#s-form .bad").forEach(e => e.classList.remove("bad"));
+    updateCount();
+  };
+
+  $("s-form").addEventListener("submit", e => {
+    e.preventDefault();
+    const f = collect();
+    const n = f.detail.length;
+    const problems = [
+      [!f.worry, "worry", "worry", "고민을 한 줄로 요약해 주세요."],
+      [!f.when, "when", 'input[name="when"]', "고민이 시작된 시기를 골라 주세요."],
+      [!f.who.length, "who", 'input[name="who"]', "관련된 사람을 하나 이상 골라 주세요."],
+      [!f.tried.length, "tried", 'input[name="tried"]', "지금까지 해본 일을 하나 이상 골라 주세요."],
+      [n < MIN_DETAIL, "detail", "detail", `자세한 사정을 ${MIN_DETAIL - n}자 더 적어 주세요.`],
+      [!f.want, "want", 'input[name="want"]', "원하는 상담 방식을 골라 주세요."],
+    ];
+    let first = null;
+    problems.forEach(([bad, key, target, msg]) => {
+      const errEl = key === "detail" ? $("detailErr") : $("err-" + key);
+      errEl.textContent = bad ? msg : "";
+      if (key === "worry" || key === "detail") $(target).classList.toggle("bad", bad);
+      else errEl.closest(".q").classList.toggle("bad", bad);
+      if (bad && !first) first = target.startsWith("input") ? document.querySelector(target) : $(target);
+    });
+    if (first) { first.focus(); first.scrollIntoView({block:"center", behavior:"smooth"}); return; }
+    if (HEAVY.test(f.worry + " " + f.detail)) { show("s-care"); window.scrollTo(0,0); return; }
+    start(f);
+  });
+  $("careBack").addEventListener("click", () => { resetForm(); show("s-form"); });
+  $("again").addEventListener("click", () => current && start(current.form));
+  $("new").addEventListener("click", () => { clearTimers(); resetForm(); show("s-form"); window.scrollTo(0,0); $("worry").focus(); });
+})();
+</script>
+
+</body></html>
